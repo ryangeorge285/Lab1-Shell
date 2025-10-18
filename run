@@ -1,2 +1,2 @@
-gcc *.c -o s3
-./s3
+gcc *.c -o s3.exe
+./s3.exe
