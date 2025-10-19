@@ -33,8 +33,12 @@ void parse_command(char line[], char *args[], int *argsc)
     ///See the man page of strtok(...)
     char *token = strtok(line, " ");
     *argsc = 0;
+
+    if(DEBUG_PRINT) printf("Parsed input: \n");
+
     while (token != NULL && *argsc < MAX_ARGS - 1)
     {
+        if(DEBUG_PRINT) printf("    [%i] %s\n", *argsc, token);
         args[(*argsc)++] = token;
         token = strtok(NULL, " ");
     }
@@ -52,16 +56,26 @@ void child(char *args[], int argsc)
     ///For reference, see the code in lecture 3.
 }
 
+/*
+Creates a child process and calls child() from it to execute the command
+*/
 void launch_program(char *args[], int argsc)
 {
-    ///Implement this function:
+    if(strcmp(args[0],"exit") == 0)
+        exit(0);
 
-    ///fork() a child process.
-    ///In the child part of the code,
-    ///call child(args, argv)
-    ///For reference, see the code in lecture 2.
+    int rc = fork();
+    
+    if(rc<0){
+        fprintf(stderr, "An error creating a child fork occured\n");
+        exit(1);
+    }
+    else if (rc==0){
+        child(args, argsc);
+    }
+    else{
+        reap();
+    }
 
-    ///Handle the 'exit' command;
-    ///so that the shell, not the child process,
-    ///exits.
+    
 }
