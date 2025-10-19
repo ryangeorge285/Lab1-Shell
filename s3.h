@@ -27,6 +27,14 @@ enum ArgIndex
     ARG_3,
 };
 
+enum RedirectionIndex
+{
+    NO_REDIRECTION,
+    INPUT_REDIRECTION,
+    OUTPUT_REDIRECTION_WRITE,
+    OUTPUT_REDIRECTION_APPEND,
+};
+
 ///With inline functions, the compiler replaces the function call 
 ///with the actual function code;
 ///inline improves speed and readability; meant for short functions (a few lines).
@@ -40,9 +48,13 @@ static inline void reap()
 void read_command_line(char line[]);
 void construct_shell_prompt(char shell_prompt[]);
 void parse_command(char line[], char *args[], int *argsc);
+int command_with_redirection(char *args[], int argsc);
 
 ///Child functions (add more as appropriate)
 void child(char *args[], int argsc);
+void child_with_input_redirected(char *args[], int argsc);
+void child_with_output_redirected_write(char *args[], int argsc);
+void child_with_output_redirected_append(char *args[], int argsc);
 
 ///Program launching functions (add more as appropriate)
 void launch_program(char *args[], int argsc);

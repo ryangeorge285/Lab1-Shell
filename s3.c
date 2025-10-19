@@ -72,6 +72,71 @@ void launch_program(char *args[], int argsc)
     else{
         reap();
     }
-
-    
 }
+
+/*
+TO IMPLEMENT - Rishabh
+Return:
+    0 if no redirection
+    1 if >
+    2 if >> 
+    3 if <
+*/
+int command_with_redirection(char *args[], int argsc)
+{
+    return 0;
+}
+
+/*
+Launch program function with redirection parameter
+*/
+void launch_program_with_redirection(char *args[], int argsc, int redirection)
+{
+    int rc = fork();
+    
+    if(rc<0){
+        fprintf(stderr, "An error creating a child fork occured\n");
+        exit(1);
+    }
+    else if (rc==0){
+        switch (redirection)
+        {
+            case INPUT_REDIRECTION: 
+                child_with_input_redirected(args, argsc);
+                break;
+            case OUTPUT_REDIRECTION_WRITE:
+                child_with_output_redirected_write(args,argsc);
+                break;
+            case OUTPUT_REDIRECTION_APPEND:
+                child_with_output_redirected_append(args,argsc);
+                break;
+        }
+    }
+    else{
+        reap();
+    }
+}
+
+/*
+TO IMPLEMENT - Ryan
+*/
+void child_with_input_redirected(char *args[], int argsc)
+{
+
+} 
+
+/*
+TO IMPLEMENT - Rishabh
+*/
+void child_with_output_redirected_write(char *args[], int argsc)
+{
+
+} 
+
+/*
+TO IMPLEMENT - Ryan
+*/
+void child_with_output_redirected_append(char *args[], int argsc)
+{
+
+} 
