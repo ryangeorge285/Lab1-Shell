@@ -186,7 +186,17 @@ TO IMPLEMENT - Rishabh
 */
 void child_with_output_redirected_write(char *args[], int argsc)
 {
-
+    char filepath[MAX_LINE];
+    extract_redirection_file(args,&argsc, OUTPUT_REDIRECTION_WRITE, filepath);
+    int fd = open(filepath, O_WRONLY|O_CREAT,0644); 
+    if(fd >= 0)
+    {
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        execvp(args[0],args);         
+    }
+    else if(DEBUG_PRINT)
+        printf("An error occured opening %s\n", filepath);
 } 
 
 /*
