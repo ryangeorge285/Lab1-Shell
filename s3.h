@@ -30,9 +30,9 @@ enum ArgIndex
 enum RedirectionIndex
 {
     NO_REDIRECTION,
-    INPUT_REDIRECTION,
     OUTPUT_REDIRECTION_WRITE,
     OUTPUT_REDIRECTION_APPEND,
+    INPUT_REDIRECTION
 };
 
 ///With inline functions, the compiler replaces the function call 

@@ -128,7 +128,9 @@ void extract_redirection_file(char *args[], int *argsc, int redirection, char* f
 
     for(int index = 0; index < *argsc; index++)
     {
-        if(strcmp(args[index],"<")==0 && redirection == 1)
+        if(strcmp(args[index],">")==0 && redirection == OUTPUT_REDIRECTION_WRITE 
+        || strcmp(args[index],">>")==0 && redirection == OUTPUT_REDIRECTION_APPEND 
+        || strcmp(args[index],"<")==0 && redirection == INPUT_REDIRECTION)
         {
             redirection_index = index;
             strcpy(filepath,args[index+1]);
@@ -155,7 +157,7 @@ Handles children with input redirected
 void child_with_input_redirected(char *args[], int argsc)
 {
     char filepath[MAX_LINE];
-    extract_redirection_file(args,&argsc, 1, filepath);
+    extract_redirection_file(args,&argsc, INPUT_REDIRECTION, filepath);
     
     int fd = open(filepath, O_RDONLY);
     if(fd >= 0)
