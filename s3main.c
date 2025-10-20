@@ -18,7 +18,6 @@ int main(int argc, char *argv[]){
 
         parse_command(line, args, &argsc);
         int redirection = command_with_redirection(args, argsc);
-        //redirection = 3;
         if(redirection > 0){///Command with redirection
            launch_program_with_redirection(args, argsc, redirection);
            reap();

@@ -79,13 +79,24 @@ void launch_program(char *args[], int argsc)
 TO IMPLEMENT - Rishabh
 Return:
     0 if no redirection
-    1 if >
-    2 if >> 
-    3 if <
+    1 if <
+    2 if >
+    3 if >>     
 */
 int command_with_redirection(char *args[], int argsc)
 {
-    return 0;
+    for(int i =0; i<argsc;i++){
+        if(strcmp(args[i],"<")){
+            return INPUT_REDIRECTION;
+        }
+        if(strcmp(args[i],">")){
+            return OUTPUT_REDIRECTION_WRITE;
+        }
+        if(strcmp(args[i],">>")){
+            return OUTPUT_REDIRECTION_APPEND;
+        }
+    }
+    return NO_REDIRECTION;
 }
 
 /*
