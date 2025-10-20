@@ -207,10 +207,10 @@ void child_with_output_redirected_append(char *args[], int argsc)
     char filepath[MAX_LINE];
     extract_redirection_file(args,&argsc, OUTPUT_REDIRECTION_APPEND, filepath);
     
-    int fd = open(filepath, O_APPEND);
+    int fd = open(filepath, O_WRONLY|O_CREAT|O_APPEND,0644);
     if(fd >= 0)
     {
-        dup2(STDOUT_FILENO, fd);
+        dup2(fd,STDOUT_FILENO);
         close(fd);
         execvp(args[0],args); 
     }
