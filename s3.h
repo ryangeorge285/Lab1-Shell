@@ -55,7 +55,10 @@ void child(char *args[], int argsc);
 void child_with_input_redirected(char *args[], int argsc);
 void child_with_output_redirected_write(char *args[], int argsc);
 void child_with_output_redirected_append(char *args[], int argsc);
+void extract_redirection_file(char *args[], int *argsc, int redirection, char* filepath);
 
 ///Program launching functions (add more as appropriate)
 void launch_program(char *args[], int argsc);
+void launch_program_with_redirection(char *args[], int argsc, int redirection);
+
 #endif

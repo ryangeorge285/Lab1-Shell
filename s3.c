@@ -71,6 +71,7 @@ void launch_program(char *args[], int argsc)
     }
     else{
         reap();
+        printf("\n");
     }
 }
 
@@ -114,15 +115,57 @@ void launch_program_with_redirection(char *args[], int argsc, int redirection)
     }
     else{
         reap();
+        printf("\n");
     }
 }
 
 /*
-TO IMPLEMENT - Ryan
+A function which extracts the filepath of a specifc redirection, and then removes both redirection operator and filepath from the args array
+*/
+void extract_redirection_file(char *args[], int *argsc, int redirection, char* filepath)
+{
+    int redirection_index = 0;
+
+    for(int index = 0; index < *argsc; index++)
+    {
+        if(strcmp(args[index],"<")==0 && redirection == 1)
+        {
+            redirection_index = index;
+            strcpy(filepath,args[index+1]);
+            if (DEBUG_PRINT) printf("Filepath: %s, Redirection operator: %i\n", filepath, redirection_index);
+            break;
+        }
+    }
+
+    args[redirection_index] = NULL;
+    args[redirection_index + 1] = NULL;
+
+    for(int index = redirection_index; index + 2 < *argsc; index++)
+    {
+        args[index] = args[index+2];
+        args[index+2] = NULL;
+    }
+
+    *argsc -= 2;
+}
+
+/*
+Handles children with input redirected
 */
 void child_with_input_redirected(char *args[], int argsc)
 {
-
+    char filepath[MAX_LINE];
+    extract_redirection_file(args,&argsc, 1, filepath);
+    
+    int fd = open(filepath, O_RDONLY);
+    if(fd >= 0)
+    {
+        dup2(fd, STDIN_FILENO);
+        close(fd);
+        execvp(args[0],args); 
+    }
+    else if(DEBUG_PRINT)
+        printf("An error occured opening %s\n", filepath);
 } 
 
 /*
