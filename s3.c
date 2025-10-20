@@ -86,13 +86,13 @@ Return:
 int command_with_redirection(char *args[], int argsc)
 {
     for(int i =0; i<argsc;i++){
-        if(strcmp(args[i],"<")){
+        if(strcmp(args[i],"<") == 0){
             return INPUT_REDIRECTION;
         }
-        if(strcmp(args[i],">")){
+        if(strcmp(args[i],">") == 0){
             return OUTPUT_REDIRECTION_WRITE;
         }
-        if(strcmp(args[i],">>")){
+        if(strcmp(args[i],">>") == 0){
             return OUTPUT_REDIRECTION_APPEND;
         }
     }
@@ -204,5 +204,16 @@ TO IMPLEMENT - Ryan
 */
 void child_with_output_redirected_append(char *args[], int argsc)
 {
-
+    char filepath[MAX_LINE];
+    extract_redirection_file(args,&argsc, OUTPUT_REDIRECTION_APPEND, filepath);
+    
+    int fd = open(filepath, O_APPEND);
+    if(fd >= 0)
+    {
+        dup2(STDOUT_FILENO, fd);
+        close(fd);
+        execvp(args[0],args); 
+    }
+    else if(DEBUG_PRINT)
+        printf("An error occured opening %s\n", filepath);
 } 
