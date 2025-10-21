@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
 
         int redirection = command_with_redirection(args, argsc);
         int cd = command_with_cd(args, argsc);
-
         if (cd > 0)
         {
             run_cd(args, argsc, lwd, cd);

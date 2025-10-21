@@ -4,9 +4,8 @@
 void construct_shell_prompt(char shell_prompt[], char lwd[])
 {
     char dir[100];
-    sprintf(dir,"[%s s3]$", lwd);
+    sprintf(dir, "[%s s3]$", lwd);
     strcpy(shell_prompt, dir);
-    
 }
 
 /// Prints a shell prompt and reads input from the user
@@ -240,10 +239,11 @@ void child_with_output_redirected_append(char *args[], int argsc)
 }
 
 /*
-TO IMPLEMENT
+Updates the directory to the cwd
 */
 void init_lwd(char *lwd)
 {
+    getcwd(lwd, MAX_PROMPT_LEN - 6);
 }
 
 /*
@@ -257,4 +257,18 @@ Handle:
 */
 void run_cd(char *args[], int argsc, char *lwd, int cd)
 {
+    int ret;
+    if (cd == CD_DIR)
+    {
+        ret = chdir(args[ARG_1]);
+    }
+    else if (cd == CD_HOME)
+    {
+        ret = chdir("~");
+    }
+
+    init_lwd(lwd);
+
+    if (ret != 0 && DEBUG_PRINT)
+        printf("An error occured changing directory\n");
 }
