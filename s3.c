@@ -3,7 +3,10 @@
 /// Simple for now, but will be expanded in a following section
 void construct_shell_prompt(char shell_prompt[], char lwd[])
 {
-    strcpy(shell_prompt, "[s3]$ ");
+    char dir[100];
+    sprintf(dir,"[%s s3]$", lwd);
+    strcpy(shell_prompt, dir);
+    
 }
 
 /// Prints a shell prompt and reads input from the user
@@ -239,7 +242,7 @@ void child_with_output_redirected_append(char *args[], int argsc)
 /*
 TO IMPLEMENT
 */
-void init_lwd(char lwd[])
+void init_lwd(char *lwd)
 {
 }
 
