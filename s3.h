@@ -40,8 +40,7 @@ enum CDIndex
     NO_CD,
     CD_DIR,
     CD_HOME,
-    CD_DOT,
-    CD_DOTDOT,
+    CD_MINUS
 };
 
 /// With inline functions, the compiler replaces the function call

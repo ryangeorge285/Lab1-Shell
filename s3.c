@@ -111,8 +111,16 @@ Returns which type of CD process it is - Rishabh
 */
 int command_with_cd(char *args[], int argsc)
 {
-    if (strcmp(args[ARG_PROGNAME], "cd") == 0)
-    {
+    if (strcmp(args[ARG_PROGNAME], "cd") == 0){
+        if (args[ARG_1] == NULL){
+            return CD_HOME;
+        }
+        else if(strcmp(args[ARG_1], "-")){
+            return CD_MINUS;
+        }
+        else{
+            return CD_DIR;
+        }        
     }
     return NO_CD;
 }
