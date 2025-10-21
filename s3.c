@@ -1,18 +1,20 @@
 #include "s3.h"
 
 /// Simple for now, but will be expanded in a following section
-void construct_shell_prompt(char shell_prompt[], char lwd[])
+void construct_shell_prompt(char shell_prompt[])
 {
     char dir[100];
-    sprintf(dir, "[%s s3]$", lwd);
-    strcpy(shell_prompt, dir);
+    char cwd[MAX_PROMPT_LEN - 6];
+
+    getcwd(cwd, 100);
+    sprintf(shell_prompt, "[%s s3]$", cwd);
 }
 
 /// Prints a shell prompt and reads input from the user
-void read_command_line(char line[], char lwd[])
+void read_command_line(char line[])
 {
     char shell_prompt[MAX_PROMPT_LEN];
-    construct_shell_prompt(shell_prompt, lwd);
+    construct_shell_prompt(shell_prompt);
     printf("%s", shell_prompt);
 
     /// See man page of fgets(...)
@@ -106,21 +108,24 @@ int command_with_redirection(char *args[], int argsc)
 }
 
 /*
-TO IMPLEMENT
 Returns which type of CD process it is - Rishabh
 */
 int command_with_cd(char *args[], int argsc)
 {
-    if (strcmp(args[ARG_PROGNAME], "cd") == 0){
-        if (args[ARG_1] == NULL){
+    if (strcmp(args[ARG_PROGNAME], "cd") == 0)
+    {
+        if (args[ARG_1] == NULL)
+        {
             return CD_HOME;
         }
-        else if(strcmp(args[ARG_1], "-")){
+        else if (strcmp(args[ARG_1], "-") == 0)
+        {
             return CD_MINUS;
         }
-        else{
+        else
+        {
             return CD_DIR;
-        }        
+        }
     }
     return NO_CD;
 }
@@ -255,27 +260,26 @@ void init_lwd(char *lwd)
 }
 
 /*
-TO IMPLEMENT
-Handle:
-    Regular
-    .
-    ..
-    -
-    'No input'
+Runs cd based on the type of CD process it is determined earlier
 */
 void run_cd(char *args[], int argsc, char *lwd, int cd)
 {
     int ret;
     if (cd == CD_DIR)
     {
+        init_lwd(lwd);
         ret = chdir(args[ARG_1]);
     }
     else if (cd == CD_HOME)
     {
-        ret = chdir("~");
+        init_lwd(lwd);
+        ret = chdir(getenv("HOME"));
     }
-
-    init_lwd(lwd);
+    else if (cd == CD_MINUS)
+    {
+        ret = chdir(lwd);
+        init_lwd(lwd);
+    }
 
     if (ret != 0 && DEBUG_PRINT)
         printf("An error occured changing directory\n");
