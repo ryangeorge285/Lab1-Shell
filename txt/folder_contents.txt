@@ -1,0 +1,11 @@
+README.md
+run
+s3.c
+s3.exe
+s3.h
+s3main.c
+txt
+
+./txt:
+folder_contents.txt
+phrases.txt
