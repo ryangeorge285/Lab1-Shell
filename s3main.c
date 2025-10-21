@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
         if (cd > 0)
         {
-            run_cd(args, argsc, lwd);
+            run_cd(args, argsc, lwd, cd);
         }
         else if (redirection > 0)
         { /// Command with redirection

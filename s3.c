@@ -252,6 +252,6 @@ Handle:
     -
     'No input'
 */
-void run_cd(char *args[], int argsc, char *lwd)
+void run_cd(char *args[], int argsc, char *lwd, int cd)
 {
 }

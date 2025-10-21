@@ -71,5 +71,6 @@ void extract_redirection_file(char *args[], int *argsc, int redirection, char *f
 /// Program launching functions (add more as appropriate)
 void launch_program(char *args[], int argsc);
 void launch_program_with_redirection(char *args[], int argsc, int redirection);
+void run_cd(char *args[], int argsc, char lwd[], int redirection);
 
 #endif
