@@ -43,6 +43,12 @@ enum CDIndex
     CD_MINUS
 };
 
+enum PipeIndex
+{
+    NO_PIPE,
+    PIPE_YES_PLEASE_OUTLOOK
+};
+
 /// With inline functions, the compiler replaces the function call
 /// with the actual function code;
 /// inline improves speed and readability; meant for short functions (a few lines).
@@ -59,8 +65,8 @@ void parse_command(char line[], char *args[], int *argsc);
 int command_with_redirection(char *args[], int argsc);
 int command_with_cd(char *args[], int argsc);
 void init_lwd(char lwd[]);
-void parse_pipes(char line[], char *commands[], int num_commands);
-void command_with_pipes(char *args[], int argsc);
+void parse_pipes(char line[], char *commands[], int *num_commands);
+int command_with_pipes(char *args[], int argsc);
 
 /// Child functions (add more as appropriate)
 void child(char *args[], int argsc);
@@ -68,7 +74,6 @@ void child_with_input_redirected(char *args[], int argsc);
 void child_with_output_redirected_write(char *args[], int argsc);
 void child_with_output_redirected_append(char *args[], int argsc);
 void extract_redirection_file(char *args[], int *argsc, int redirection, char *filepath);
-
 
 /// Program launching functions (add more as appropriate)
 void launch_program(char *args[], int argsc);

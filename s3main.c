@@ -16,16 +16,24 @@ int main(int argc, char *argv[])
     /// Stores the number of arguments
     int argsc;
 
+    char *commands[MAX_LINE];
+    int num_command;
+
     while (1)
     {
 
         read_command_line(line);
-
         parse_command(line, args, &argsc);
 
+        int pipe = command_with_pipes(args, argsc);
         int redirection = command_with_redirection(args, argsc);
         int cd = command_with_cd(args, argsc);
-        if (cd > 0)
+
+        if (pipe > 0)
+        {
+            parse_pipes(line, commands, &num_command);
+        }
+        else if (cd > 0)
         {
             run_cd(args, argsc, lwd, cd);
         }

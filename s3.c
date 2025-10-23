@@ -8,7 +8,6 @@ void construct_shell_prompt(char shell_prompt[])
     sprintf(shell_prompt, "[%s s3]$", cwd);
 }
 
-
 /// Prints a shell prompt and reads input from the user
 void read_command_line(char line[])
 {
@@ -26,15 +25,20 @@ void read_command_line(char line[])
     line[strlen(line) - 1] = '\0';
 }
 
+/*
+    Implements simple tokenization (space delimited)
+    Note: strtok puts '\0' (null) characters within the existing storage,
+    to split it into logical cstrings.
+    There is no dynamic allocation.
+*/
+
 void parse_command(char line[], char *args[], int *argsc)
 {
-    /// Implements simple tokenization (space delimited)
-    /// Note: strtok puts '\0' (null) characters within the existing storage,
-    /// to split it into logical cstrings.
-    /// There is no dynamic allocation.
+    char line_copy[MAX_ARGS];
+    strcpy(line_copy, line);
 
     /// See the man page of strtok(...)
-    char *token = strtok(line, " ");
+    char *token = strtok(line_copy, " ");
     *argsc = 0;
 
     if (DEBUG_PRINT)
@@ -106,7 +110,6 @@ int command_with_redirection(char *args[], int argsc)
     return NO_REDIRECTION;
 }
 
-
 /*
 Returns which type of CD process it is - Rishabh
 */
@@ -131,23 +134,43 @@ int command_with_cd(char *args[], int argsc)
 }
 
 /*
-tokenise the commands by '|'
+Tokenise the commands by '|'
 */
-void parse_pipes(char line[], char *commands[], int num_commands)
+void parse_pipes(char line[], char *commands[], int *num_commands)
 {
+    char *token = strtok(line, "|");
+    *num_commands = 0;
 
+    if (DEBUG_PRINT)
+        printf("Parsed piped input: \n");
+
+    while (token != NULL && *num_commands < MAX_ARGS - 1)
+    {
+        if (DEBUG_PRINT)
+            printf("    Command [%i] %s\n", *num_commands, token);
+        commands[(*num_commands)++] = token;
+        token = strtok(NULL, " ");
+    }
+
+    commands[*num_commands] = NULL; /// args must be null terminated
 }
 
 /*
 Check whether the command has pipes
 */
-void command_with_pipes(char *args[], int argsc)
+int command_with_pipes(char *args[], int argsc)
 {
-
+    for (int index = 0; index < argsc; index++)
+    {
+        if (strcmp(args[index], "|") == 0)
+        {
+            if (DEBUG_PRINT)
+                printf("Pipe operator found\n");
+            return PIPE_YES_PLEASE_OUTLOOK;
+        }
+    }
+    return NO_PIPE;
 }
-
-
-
 
 /*
 Launch program function with redirection parameter
@@ -304,25 +327,10 @@ void run_cd(char *args[], int argsc, char *lwd, int cd)
         printf("An error occured changing directory\n");
 }
 
-
-
 /*
-Loop for piping together 
+Loop for piping together
 */
 
 void launch_program_with_piping(char *commands[], int num_commands)
 {
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
