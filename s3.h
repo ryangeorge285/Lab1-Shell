@@ -59,6 +59,8 @@ void parse_command(char line[], char *args[], int *argsc);
 int command_with_redirection(char *args[], int argsc);
 int command_with_cd(char *args[], int argsc);
 void init_lwd(char lwd[]);
+void parse_pipes(char line[], char *commands[], int num_commands);
+void command_with_pipes(char *args[], int argsc);
 
 /// Child functions (add more as appropriate)
 void child(char *args[], int argsc);
@@ -67,9 +69,11 @@ void child_with_output_redirected_write(char *args[], int argsc);
 void child_with_output_redirected_append(char *args[], int argsc);
 void extract_redirection_file(char *args[], int *argsc, int redirection, char *filepath);
 
+
 /// Program launching functions (add more as appropriate)
 void launch_program(char *args[], int argsc);
 void launch_program_with_redirection(char *args[], int argsc, int redirection);
 void run_cd(char *args[], int argsc, char lwd[], int redirection);
+void launch_program_with_piping(char *commands[], int num_commands);
 
 #endif

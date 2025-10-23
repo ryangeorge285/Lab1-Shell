@@ -3,12 +3,11 @@
 /// Simple for now, but will be expanded in a following section
 void construct_shell_prompt(char shell_prompt[])
 {
-    char dir[100];
     char cwd[MAX_PROMPT_LEN - 6];
-
     getcwd(cwd, 100);
     sprintf(shell_prompt, "[%s s3]$", cwd);
 }
+
 
 /// Prints a shell prompt and reads input from the user
 void read_command_line(char line[])
@@ -107,6 +106,7 @@ int command_with_redirection(char *args[], int argsc)
     return NO_REDIRECTION;
 }
 
+
 /*
 Returns which type of CD process it is - Rishabh
 */
@@ -129,6 +129,25 @@ int command_with_cd(char *args[], int argsc)
     }
     return NO_CD;
 }
+
+/*
+tokenise the commands by '|'
+*/
+void parse_pipes(char line[], char *commands[], int num_commands)
+{
+
+}
+
+/*
+Check whether the command has pipes
+*/
+void command_with_pipes(char *args[], int argsc)
+{
+
+}
+
+
+
 
 /*
 Launch program function with redirection parameter
@@ -284,3 +303,26 @@ void run_cd(char *args[], int argsc, char *lwd, int cd)
     if (ret != 0 && DEBUG_PRINT)
         printf("An error occured changing directory\n");
 }
+
+
+
+/*
+Loop for piping together 
+*/
+
+void launch_program_with_piping(char *commands[], int num_commands)
+{
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
