@@ -34,8 +34,7 @@ void read_command_line(char line[])
 
 void parse_command(char line[], char *args[], int *argsc)
 {
-    char line_copy[MAX_ARGS];
-    strcpy(line_copy, line);
+    char *line_copy = strdup(line);
 
     /// See the man page of strtok(...)
     char *token = strtok(line_copy, " ");
@@ -149,7 +148,7 @@ void parse_pipes(char line[], char *commands[], int *num_commands)
         if (DEBUG_PRINT)
             printf("    Command [%i] %s\n", *num_commands, token);
         commands[(*num_commands)++] = token;
-        token = strtok(NULL, " ");
+        token = strtok(NULL, "|");
     }
 
     commands[*num_commands] = NULL; /// args must be null terminated
