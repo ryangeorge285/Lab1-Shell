@@ -32,6 +32,8 @@ int main(int argc, char *argv[])
         if (pipe > 0)
         {
             parse_pipes(line, commands, &num_command);
+            launch_program_with_piping(commands, num_command);
+            reap();
         }
         else if (cd > 0)
         {

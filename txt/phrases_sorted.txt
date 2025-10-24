@@ -1,3 +1,6 @@
+    [0] cat
+    [1] txt/phrases.txt
+Parsed input: 
 barking dog
 barking fox
 blooming branch
@@ -198,10 +201,7 @@ whispering sea
 whispering tree
 whispering tree
 whispering wind
-sleeping lion
-rising mist
-glowing dawn
-rolling storm
+storm
 spinning leaf
 sleeping lion
 rising mist
