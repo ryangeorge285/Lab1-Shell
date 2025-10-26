@@ -81,7 +81,6 @@ void launch_program(char *args[], int argsc)
     }
     else
     {
-        reap();
         printf("\n");
     }
 }
@@ -200,7 +199,6 @@ void launch_program_with_redirection(char *args[], int argsc, int redirection)
     }
     else
     {
-        reap();
         printf("\n");
     }
 }
@@ -332,4 +330,72 @@ Loop for piping together
 
 void launch_program_with_piping(char *commands[], int num_commands)
 {
+    int pipe_fds[num_commands - 1][2];
+    for (int pipe_index = 0; pipe_index < num_commands - 1; pipe_index++)
+    {
+        if (pipe(pipe_fds[pipe_index]) < 0)
+            printf("An error occured creating a pipe\n");
+    }
+
+    for (int command_index = 0; command_index < num_commands; command_index++)
+    {
+        int rc = fork();
+
+        if (rc == 0)
+        {
+            char *args[MAX_ARGS];
+            int argsc;
+
+            parse_command(commands[command_index], args, &argsc);
+
+            int redirection = command_with_redirection(args, argsc);
+
+            if (command_index > 0)
+            {
+                dup2(pipe_fds[command_index - 1][0], STDIN_FILENO);
+            }
+
+            if (command_index < num_commands - 1)
+            {
+                dup2(pipe_fds[command_index][1], STDOUT_FILENO);
+            }
+
+            for (int pipe_index = 0; pipe_index < num_commands - 1; pipe_index++)
+            {
+                close(pipe_fds[pipe_index][0]);
+                close(pipe_fds[pipe_index][1]);
+            }
+
+            if (redirection > 0)
+            {
+                switch (redirection)
+                {
+                case INPUT_REDIRECTION:
+                    child_with_input_redirected(args, argsc);
+                    break;
+                case OUTPUT_REDIRECTION_WRITE:
+                    child_with_output_redirected_write(args, argsc);
+                    break;
+                case OUTPUT_REDIRECTION_APPEND:
+                    child_with_output_redirected_append(args, argsc);
+                    break;
+                }
+            }
+            else
+            {
+                child(args, argsc);
+            }
+        }
+    }
+
+    for (int pipe_index = 0; pipe_index < num_commands - 1; pipe_index++)
+    {
+        close(pipe_fds[pipe_index][0]);
+        close(pipe_fds[pipe_index][1]);
+    }
+
+    for (int command_index = 0; command_index < num_commands; command_index++)
+    {
+        wait(NULL);
+    }
 }
