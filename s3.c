@@ -417,7 +417,7 @@ Input: command1 ; command2 return [command1, command2]
 Input: command1 return [command1]
 */
 /*
-Tokenise the commands by '|'
+Tokenise the commands by ';'
 */
 void parse_semicolon(char line[], char *commands[], int *num_commands)
 {
