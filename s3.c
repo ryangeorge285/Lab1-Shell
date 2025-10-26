@@ -5,7 +5,7 @@ void construct_shell_prompt(char shell_prompt[])
 {
     char cwd[MAX_PROMPT_LEN - 6];
     getcwd(cwd, 100);
-    sprintf(shell_prompt, "[%s s3]$", cwd);
+    sprintf(shell_prompt, "\n[%s s3]$", cwd);
 }
 
 /// Prints a shell prompt and reads input from the user
@@ -82,7 +82,6 @@ void launch_program(char *args[], int argsc)
     else
     {
         reap();
-        printf("\n");
     }
 }
 
@@ -201,7 +200,6 @@ void launch_program_with_redirection(char *args[], int argsc, int redirection)
     else
     {
         reap();
-        printf("\n");
     }
 }
 
@@ -382,19 +380,18 @@ void launch_program_with_piping(char *commands[], int num_commands)
             {
                 switch (redirection)
                 {
-                    case INPUT_REDIRECTION:
-                        child_with_input_redirected(args, argsc);
-                    case OUTPUT_REDIRECTION_APPEND:
-                        child_with_output_redirected_append(args, argsc);
-                    case OUTPUT_REDIRECTION_WRITE:
-                        child_with_output_redirected_write(args, argsc);
+                case INPUT_REDIRECTION:
+                    child_with_input_redirected(args, argsc);
+                case OUTPUT_REDIRECTION_APPEND:
+                    child_with_output_redirected_append(args, argsc);
+                case OUTPUT_REDIRECTION_WRITE:
+                    child_with_output_redirected_write(args, argsc);
                 }
             }
             else
             {
                 child(args, argsc);
             }
-                
 
             exit(0);
         }
