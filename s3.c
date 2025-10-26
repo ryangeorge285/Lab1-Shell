@@ -333,59 +333,66 @@ Loop for piping together
 void launch_program_with_piping(char *commands[], int num_commands)
 {
     char *args[128];
-    int argsc=0;
-    int fd[num_commands-1][2];
+    int argsc = 0;
+
+    int fd[num_commands - 1][2];
     int rc;
-    for(int i =0; i< num_commands-1; i++){
-        int rc = pipe(fd[i]);
-        if(rc<0){
+
+    for (int pipe_index = 0; pipe_index < num_commands - 1; pipe_index++)
+    {
+        if (pipe(fd[pipe_index]))
+        {
             perror("pipe failed");
             exit(EXIT_FAILURE);
         }
     }
-    for (int i =0;i<num_commands; i++){
+
+    for (int i = 0; i < num_commands; i++)
+    {
         rc = fork();
-        if(rc<0){
+        if (rc < 0)
+        {
             perror("fork failed");
             exit(EXIT_FAILURE);
-        } else if(rc ==0) {
+        }
+        else if (rc == 0)
+        {
             parse_command(commands[i], args, &argsc);
             int redirection = command_with_redirection(args, argsc);
-            if(i >0){
-                
-                dup2(fd[i-1][0], STDIN_FILENO);
-                close(fd[i-1][1]);
+
+            if (i > 0)
+            {
+                dup2(fd[i - 1][0], STDIN_FILENO);
+                close(fd[i - 1][1]);
             }
 
-            if(i<num_commands-1){
-                
+            if (i < num_commands - 1)
+            {
                 dup2(fd[i][1], STDOUT_FILENO);
                 close(fd[i][0]);
             }
 
-            for(int j =0; j<num_commands-1;j++){
+            for (int j = 0; j < num_commands - 1; j++)
+            {
                 close(fd[j][0]);
                 close(fd[j][1]);
             }
-        
-            if (redirection == NO_REDIRECTION){
-                execvp(args[0], args);
-            } else{
-                launch_program_with_redirection(args,argsc, redirection);
-            }
-            exit(1);
 
-            
+            if (redirection == NO_REDIRECTION)
+                child(args, argsc);
+            else
+                launch_program_with_redirection(args, argsc, redirection);
+
+            exit(0);
         }
     }
 
-    for(int i =0; i<num_commands-1;i++){
+    for (int i = 0; i < num_commands - 1; i++)
+    {
         close(fd[i][0]);
         close(fd[i][1]);
     }
-    for (int i = 0; i < num_commands; i++){
-        wait(NULL);
-    }
-    
 
+    for (int i = 0; i < num_commands; i++)
+        wait(NULL);
 }
