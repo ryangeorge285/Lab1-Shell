@@ -378,10 +378,23 @@ void launch_program_with_piping(char *commands[], int num_commands)
                 close(fd[j][1]);
             }
 
-            if (redirection == NO_REDIRECTION)
-                child(args, argsc);
+            if (redirection > 0)
+            {
+                switch (redirection)
+                {
+                    case INPUT_REDIRECTION:
+                        child_with_input_redirected(args, argsc);
+                    case OUTPUT_REDIRECTION_APPEND:
+                        child_with_output_redirected_append(args, argsc);
+                    case OUTPUT_REDIRECTION_WRITE:
+                        child_with_output_redirected_write(args, argsc);
+                }
+            }
             else
-                launch_program_with_redirection(args, argsc, redirection);
+            {
+                child(args, argsc);
+            }
+                
 
             exit(0);
         }
@@ -408,18 +421,19 @@ Tokenise the commands by '|'
 */
 void parse_semicolon(char line[], char *commands[], int *num_commands)
 {
-    char *token = strtok(line, "|");
+    char *line_copy = strdup(line);
+    char *token = strtok(line_copy, ";");
     *num_commands = 0;
 
     if (DEBUG_PRINT)
-        printf("Parsed piped input: \n");
+        printf("Parsed batched input: \n");
 
     while (token != NULL && *num_commands < MAX_ARGS - 1)
     {
         if (DEBUG_PRINT)
             printf("    Command [%i] %s\n", *num_commands, token);
         commands[(*num_commands)++] = token;
-        token = strtok(NULL, "|");
+        token = strtok(NULL, ";");
     }
 
     commands[*num_commands] = NULL; /// args must be null terminated

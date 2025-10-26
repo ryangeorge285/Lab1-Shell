@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     while (1)
     {
         read_command_line(line);
-        // parse_semicolons();
+        parse_semicolon(line, command_array, &num_commands);
 
         for (int command_index = 0; command_index < num_commands; command_index++)
         {
