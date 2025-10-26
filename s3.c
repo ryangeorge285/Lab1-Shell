@@ -396,3 +396,31 @@ void launch_program_with_piping(char *commands[], int num_commands)
     for (int i = 0; i < num_commands; i++)
         wait(NULL);
 }
+
+/*
+Parse a list of commands a return them in an array
+eg.
+Input: command1 ; command2 return [command1, command2]
+Input: command1 return [command1]
+*/
+/*
+Tokenise the commands by '|'
+*/
+void parse_semicolon(char line[], char *commands[], int *num_commands)
+{
+    char *token = strtok(line, "|");
+    *num_commands = 0;
+
+    if (DEBUG_PRINT)
+        printf("Parsed piped input: \n");
+
+    while (token != NULL && *num_commands < MAX_ARGS - 1)
+    {
+        if (DEBUG_PRINT)
+            printf("    Command [%i] %s\n", *num_commands, token);
+        commands[(*num_commands)++] = token;
+        token = strtok(NULL, "|");
+    }
+
+    commands[*num_commands] = NULL; /// args must be null terminated
+}

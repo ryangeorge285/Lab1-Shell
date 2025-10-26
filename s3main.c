@@ -16,38 +16,44 @@ int main(int argc, char *argv[])
     /// Stores the number of arguments
     int argsc;
 
-    char *commands[MAX_LINE];
-    int num_command;
+    char *commands_pipe[MAX_LINE];
+    int num_command_pipe;
+
+    char *command_array[MAX_LINE];
+    int num_commands;
 
     while (1)
     {
-
         read_command_line(line);
-        parse_command(line, args, &argsc);
+        // parse_semicolons();
 
-        int pipe = command_with_pipes(args, argsc);
-        int redirection = command_with_redirection(args, argsc);
-        int cd = command_with_cd(args, argsc);
+        for (int command_index = 0; command_index < num_commands; command_index++)
+        {
+            parse_command(command_array[command_index], args, &argsc);
 
-        if (pipe > 0)
-        {
-            parse_pipes(line, commands, &num_command);
-            launch_program_with_piping(commands, num_command);
-            reap();
-        }
-        else if (cd > 0)
-        {
-            run_cd(args, argsc, lwd, cd);
-        }
-        else if (redirection > 0)
-        { /// Command with redirection
-            launch_program_with_redirection(args, argsc, redirection);
-            reap();
-        }
-        else /// Basic command
-        {
-            launch_program(args, argsc);
-            reap();
+            int pipe = command_with_pipes(args, argsc);
+            int redirection = command_with_redirection(args, argsc);
+            int cd = command_with_cd(args, argsc);
+
+            if (pipe > 0)
+            {
+                parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
+                launch_program_with_piping(commands_pipe, num_command_pipe);
+            }
+            else if (cd > 0)
+            {
+                run_cd(args, argsc, lwd, cd);
+            }
+            else if (redirection > 0)
+            { /// Command with redirection
+                launch_program_with_redirection(args, argsc, redirection);
+                reap();
+            }
+            else /// Basic command
+            {
+                launch_program(args, argsc);
+                reap();
+            }
         }
     }
 

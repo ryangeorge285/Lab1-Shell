@@ -66,6 +66,7 @@ int command_with_redirection(char *args[], int argsc);
 int command_with_cd(char *args[], int argsc);
 void init_lwd(char lwd[]);
 void parse_pipes(char line[], char *commands[], int *num_commands);
+void parse_semicolon(char line[], char *commands[], int *num_commands);
 int command_with_pipes(char *args[], int argsc);
 
 /// Child functions (add more as appropriate)
