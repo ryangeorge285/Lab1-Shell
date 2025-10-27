@@ -49,6 +49,12 @@ enum PipeIndex
     PIPE_YES_PLEASE_OUTLOOK
 };
 
+enum SubshellIndex
+{
+    NO_SUBSHELL,
+    SUBSHELL_PRESENT
+};
+
 /// With inline functions, the compiler replaces the function call
 /// with the actual function code;
 /// inline improves speed and readability; meant for short functions (a few lines).
@@ -68,12 +74,14 @@ void init_lwd(char lwd[]);
 void parse_pipes(char line[], char *commands[], int *num_commands);
 void parse_semicolon(char line[], char *commands[], int *num_commands);
 int command_with_pipes(char *args[], int argsc);
+int command_with_subshell(char line[]);
 
 /// Child functions (add more as appropriate)
 void child(char *args[], int argsc);
 void child_with_input_redirected(char *args[], int argsc);
 void child_with_output_redirected_write(char *args[], int argsc);
 void child_with_output_redirected_append(char *args[], int argsc);
+void execute_subshell(char line[]);
 void extract_redirection_file(char *args[], int *argsc, int redirection, char *filepath);
 
 /// Program launching functions (add more as appropriate)

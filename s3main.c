@@ -29,30 +29,43 @@ int main(int argc, char *argv[])
 
         for (int command_index = 0; command_index < num_commands; command_index++)
         {
-            parse_command(command_array[command_index], args, &argsc);
+            int shell = command_with_subshell(command_array[command_index]);
 
-            int pipe = command_with_pipes(args, argsc);
-            int redirection = command_with_redirection(args, argsc);
-            int cd = command_with_cd(args, argsc);
+            if (SUBSHELL_PRESENT)
+            {
+                /*
+                Fork
+                Parent does nothing but wait
+                Child calls execute_subshell
+                */
+            }
+            else
+            {
+                parse_command(command_array[command_index], args, &argsc);
 
-            if (pipe > 0)
-            {
-                parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
-                launch_program_with_piping(commands_pipe, num_command_pipe);
-            }
-            else if (cd > 0)
-            {
-                run_cd(args, argsc, lwd, cd);
-            }
-            else if (redirection > 0)
-            { /// Command with redirection
-                launch_program_with_redirection(args, argsc, redirection);
-                reap();
-            }
-            else /// Basic command
-            {
-                launch_program(args, argsc);
-                reap();
+                int pipe = command_with_pipes(args, argsc);
+                int redirection = command_with_redirection(args, argsc);
+                int cd = command_with_cd(args, argsc);
+
+                if (pipe > 0)
+                {
+                    parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
+                    launch_program_with_piping(commands_pipe, num_command_pipe);
+                }
+                else if (cd > 0)
+                {
+                    run_cd(args, argsc, lwd, cd);
+                }
+                else if (redirection > 0)
+                { /// Command with redirection
+                    launch_program_with_redirection(args, argsc, redirection);
+                    reap();
+                }
+                else /// Basic command
+                {
+                    launch_program(args, argsc);
+                    reap();
+                }
             }
         }
     }

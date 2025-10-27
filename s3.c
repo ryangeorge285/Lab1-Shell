@@ -355,8 +355,14 @@ void launch_program_with_piping(char *commands[], int num_commands)
         }
         else if (rc == 0)
         {
-            parse_command(commands[i], args, &argsc);
-            int redirection = command_with_redirection(args, argsc);
+            int shell = command_with_subshell(commands[i]);
+            int redirection = NO_REDIRECTION;
+
+            if (NO_SUBSHELL)
+            {
+                parse_command(commands[i], args, &argsc);
+                redirection = command_with_redirection(args, argsc);
+            }
 
             if (i > 0)
             {
@@ -376,7 +382,9 @@ void launch_program_with_piping(char *commands[], int num_commands)
                 close(fd[j][1]);
             }
 
-            if (redirection > 0)
+            if (SUBSHELL_PRESENT)
+                execute_subshell(commands[i]);
+            else if (redirection > 0)
             {
                 switch (redirection)
                 {
@@ -408,13 +416,11 @@ void launch_program_with_piping(char *commands[], int num_commands)
 }
 
 /*
-Parse a list of commands a return them in an array
-eg.
-Input: command1 ; command2 return [command1, command2]
-Input: command1 return [command1]
-*/
-/*
 Tokenise the commands by ';'
+
+TO BE UPDATED:
+echo "Start processing..." ; (cd /var/log ; cat syslog |
+Algorithm has only tokenise top level ; and ignore any ; in side () or even (())
 */
 void parse_semicolon(char line[], char *commands[], int *num_commands)
 {
@@ -434,4 +440,63 @@ void parse_semicolon(char line[], char *commands[], int *num_commands)
     }
 
     commands[*num_commands] = NULL; /// args must be null terminated
+}
+
+/*
+Executes a subshell
+*/
+void execute_subshell(char line[])
+{
+    char lwd[MAX_PROMPT_LEN - 6];
+    init_lwd(lwd);
+
+    char *args[MAX_ARGS];
+    int argsc;
+
+    char *commands_pipe[MAX_LINE];
+    int num_command_pipe;
+
+    char *command_array[MAX_LINE];
+    int num_commands;
+
+    parse_semicolon(line, command_array, &num_commands);
+
+    for (int command_index = 0; command_index < num_commands; command_index++)
+    {
+        parse_command(command_array[command_index], args, &argsc);
+
+        int pipe = command_with_pipes(args, argsc);
+        int redirection = command_with_redirection(args, argsc);
+        int cd = command_with_cd(args, argsc);
+
+        if (pipe > 0)
+        {
+            parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
+            launch_program_with_piping(commands_pipe, num_command_pipe);
+        }
+        else if (cd > 0)
+        {
+            run_cd(args, argsc, lwd, cd);
+        }
+        else if (redirection > 0)
+        { /// Command with redirection
+            launch_program_with_redirection(args, argsc, redirection);
+            reap();
+        }
+        else /// Basic command
+        {
+            launch_program(args, argsc);
+            reap();
+        }
+    }
+}
+
+/*
+Search if there are subshells by looking for brackets
+If it does, delete the brackets
+If the input or output of the subshell is piped, return NO_SUBSHELL
+*/
+int command_with_subshell(char line[])
+{
+    return NO_SUBSHELL;
 }
