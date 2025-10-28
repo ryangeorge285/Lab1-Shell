@@ -446,7 +446,8 @@ void parse_semicolon(char line[], char *commands[], int *num_commands)
         { 
             num_subshell--;
         }
-        else if (line[i] == ';' && num_subshell == 0)
+        
+        if (line[i] == ';' && num_subshell == 0)
         {
             if (count > 0) {
                 cmd[count] = '\0'; // ending the string
