@@ -421,25 +421,56 @@ Tokenise the commands by ';'
 TO BE UPDATED:
 echo "Start processing..." ; (cd /var/log ; cat syslog |
 Algorithm has only tokenise top level ; and ignore any ; in side () or even (())
+
+echo "Start processing..." , (cd /var/log , cat syslog | sort > sorted_syslog.txt) , echo "Finished writing sorted log." , date
+
 */
 void parse_semicolon(char line[], char *commands[], int *num_commands)
 {
-    char *line_copy = strdup(line);
-    char *token = strtok(line_copy, ";");
     *num_commands = 0;
+    int num_subshell = 0;
+    size_t length = strlen(line);
+    int count=0;
+    char cmd[MAX_PROMPT_LEN];
 
     if (DEBUG_PRINT)
         printf("Parsed batched input: \n");
-
-    while (token != NULL && *num_commands < MAX_ARGS - 1)
+    
+    for (size_t i = 0; i<length; i++)  // manually tokenising here
     {
-        if (DEBUG_PRINT)
-            printf("    Command [%i] %s\n", *num_commands, token);
-        commands[(*num_commands)++] = token;
-        token = strtok(NULL, ";");
+        if (line[i] == '(')
+        { 
+            num_subshell++;
+        }
+        else if (line[i] == ')')
+        { 
+            num_subshell--;
+        }
+        else if (line[i] == ';' && num_subshell == 0)
+        {
+            if (count > 0) {
+                cmd[count] = '\0'; // ending the string
+                if (DEBUG_PRINT)
+                    printf("    Command [%i] %s\n", *num_commands, cmd);
+                commands[(*num_commands)++] = strdup(cmd); // copying string and adding it to commands
+                count = 0;
+            }
+        } 
+        else 
+        {
+            cmd[count++] = line[i]; // adding the characters to cmd
+        }
     }
 
-    commands[*num_commands] = NULL; /// args must be null terminated
+    if (count > 0) //handle last line
+    {
+        cmd[count] = '\0';
+        commands[(*num_commands)++] = strdup(cmd);
+    }
+
+    commands[*num_commands] = NULL;
+
+    
 }
 
 /*
