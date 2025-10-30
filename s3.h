@@ -16,7 +16,7 @@
 #define MAX_ARGS 128
 #define MAX_PROMPT_LEN 256
 
-#define DEBUG_PRINT 1
+#define DEBUG_PRINT 0
 
 /// Enum for readable argument indices (use where required)
 enum ArgIndex

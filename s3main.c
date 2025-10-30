@@ -29,15 +29,20 @@ int main(int argc, char *argv[])
 
         for (int command_index = 0; command_index < num_commands; command_index++)
         {
+
             int shell = command_with_subshell(command_array[command_index]);
 
-            if (SUBSHELL_PRESENT)
+            if (shell == SUBSHELL_PRESENT)
             {
-                /*
-                Fork
-                Parent does nothing but wait
-                Child calls execute_subshell
-                */
+                int rc = fork();
+
+                if (rc == 0)
+                {
+                    execute_subshell(command_array[command_index]);
+                    exit(0);
+                }
+                else
+                    wait(NULL);
             }
             else
             {

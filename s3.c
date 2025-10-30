@@ -358,7 +358,7 @@ void launch_program_with_piping(char *commands[], int num_commands)
             int shell = command_with_subshell(commands[i]);
             int redirection = NO_REDIRECTION;
 
-            if (NO_SUBSHELL)
+            if (shell == NO_SUBSHELL)
             {
                 parse_command(commands[i], args, &argsc);
                 redirection = command_with_redirection(args, argsc);
@@ -382,8 +382,15 @@ void launch_program_with_piping(char *commands[], int num_commands)
                 close(fd[j][1]);
             }
 
-            if (SUBSHELL_PRESENT)
-                execute_subshell(commands[i]);
+            if (shell == SUBSHELL_PRESENT)
+            {
+                int rc = fork();
+
+                if (rc == 0)
+                    execute_subshell(commands[i]);
+                else
+                    wait(NULL);
+            }
             else if (redirection > 0)
             {
                 switch (redirection)
@@ -430,48 +437,49 @@ void parse_semicolon(char line[], char *commands[], int *num_commands)
     *num_commands = 0;
     int num_subshell = 0;
     size_t length = strlen(line);
-    int count=0;
+    int count = 0;
     char cmd[MAX_PROMPT_LEN];
 
     if (DEBUG_PRINT)
         printf("Parsed batched input: \n");
-    
-    for (size_t i = 0; i<length; i++)  // manually tokenising here
+
+    for (size_t i = 0; i < length; i++) // manually tokenising here
     {
         if (line[i] == '(')
-        { 
+        {
             num_subshell++;
+            cmd[count++] = '(';
         }
         else if (line[i] == ')')
-        { 
+        {
             num_subshell--;
+            cmd[count++] = ')';
         }
         
         if (line[i] == ';' && num_subshell == 0)
         {
-            if (count > 0) {
+            if (count > 0)
+            {
                 cmd[count] = '\0'; // ending the string
                 if (DEBUG_PRINT)
                     printf("    Command [%i] %s\n", *num_commands, cmd);
                 commands[(*num_commands)++] = strdup(cmd); // copying string and adding it to commands
                 count = 0;
             }
-        } 
-        else 
+        }
+        else
         {
             cmd[count++] = line[i]; // adding the characters to cmd
         }
     }
 
-    if (count > 0) //handle last line
+    if (count > 0) // handle last line
     {
         cmd[count] = '\0';
         commands[(*num_commands)++] = strdup(cmd);
     }
 
     commands[*num_commands] = NULL;
-
-    
 }
 
 /*
@@ -479,6 +487,9 @@ Executes a subshell
 */
 void execute_subshell(char line[])
 {
+    if (DEBUG_PRINT)
+        printf("Entering subshell\n");
+
     char lwd[MAX_PROMPT_LEN - 6];
     init_lwd(lwd);
 
@@ -495,32 +506,52 @@ void execute_subshell(char line[])
 
     for (int command_index = 0; command_index < num_commands; command_index++)
     {
-        parse_command(command_array[command_index], args, &argsc);
+        int shell = command_with_subshell(command_array[command_index]);
 
-        int pipe = command_with_pipes(args, argsc);
-        int redirection = command_with_redirection(args, argsc);
-        int cd = command_with_cd(args, argsc);
+        if (shell == SUBSHELL_PRESENT)
+        {
+            int rc = fork();
 
-        if (pipe > 0)
-        {
-            parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
-            launch_program_with_piping(commands_pipe, num_command_pipe);
+            if (rc == 0)
+            {
+                execute_subshell(command_array[command_index]);
+                exit(0);
+            }
+            else
+                wait(NULL);
         }
-        else if (cd > 0)
+        else
         {
-            run_cd(args, argsc, lwd, cd);
-        }
-        else if (redirection > 0)
-        { /// Command with redirection
-            launch_program_with_redirection(args, argsc, redirection);
-            reap();
-        }
-        else /// Basic command
-        {
-            launch_program(args, argsc);
-            reap();
+            parse_command(command_array[command_index], args, &argsc);
+
+            int pipe = command_with_pipes(args, argsc);
+            int redirection = command_with_redirection(args, argsc);
+            int cd = command_with_cd(args, argsc);
+
+            if (pipe > 0)
+            {
+                parse_pipes(command_array[command_index], commands_pipe, &num_command_pipe);
+                launch_program_with_piping(commands_pipe, num_command_pipe);
+            }
+            else if (cd > 0)
+            {
+                run_cd(args, argsc, lwd, cd);
+            }
+            else if (redirection > 0)
+            { /// Command with redirection
+                launch_program_with_redirection(args, argsc, redirection);
+                reap();
+            }
+            else /// Basic command
+            {
+                launch_program(args, argsc);
+                reap();
+            }
         }
     }
+
+    if (DEBUG_PRINT)
+        printf("Exiting subshell\n");
 }
 
 /*
@@ -530,5 +561,76 @@ If the input or output of the subshell is piped, return NO_SUBSHELL
 */
 int command_with_subshell(char line[])
 {
-    return NO_SUBSHELL;
+    int i = 0;
+
+    /* skip leading spaces */
+    while (line[i] != '\0' && line[i] == ' ')
+        i++;
+
+    /* not a subshell */
+    if (line[i] != '(')
+    {
+        if (DEBUG_PRINT)
+            printf("No subshell found\n");
+        return NO_SUBSHELL;
+    }
+
+    if (DEBUG_PRINT)
+        printf("Found potential subshell at index %d\n", i);
+
+    int open_index = i;
+
+    /* check for a pipe before the subshell (ignoring spaces) -> piped input */
+    int j = open_index - 1;
+    while (j >= 0 && line[j] == ' ')
+        j--;
+    if (j >= 0 && line[j] == '|')
+    {
+        if (DEBUG_PRINT)
+            printf("Subshell has piped input -> treat as no subshell\n");
+        return NO_SUBSHELL;
+    }
+
+    /* find matching closing parenthesis, supporting nested parentheses */
+    int depth = 0;
+    int close_index = -1;
+    for (int k = open_index; line[k] != '\0'; k++)
+    {
+        if (line[k] == '(')
+            depth++;
+        else if (line[k] == ')')
+        {
+            depth--;
+            if (depth == 0)
+            {
+                close_index = k;
+                break;
+            }
+        }
+    }
+
+    /* no matching closing parenthesis */
+    if (close_index == -1)
+    {
+        if (DEBUG_PRINT)
+            printf("No matching closing parenthesis for subshell\n");
+        return NO_SUBSHELL;
+    }
+
+    /* check for a pipe after the subshell (ignoring spaces) -> piped output */
+    int p = close_index + 1;
+    while (line[p] != '\0' && line[p] == ' ')
+        p++;
+    if (line[p] == '|')
+    {
+        if (DEBUG_PRINT)
+            printf("Subshell has piped output -> treat as no subshell\n");
+        return NO_SUBSHELL;
+    }
+
+    /* remove the actual parentheses characters (replace with spaces) */
+    line[open_index] = ' ';
+    line[close_index] = ' ';
+
+    return SUBSHELL_PRESENT;
 }
