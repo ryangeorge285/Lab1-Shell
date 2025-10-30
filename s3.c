@@ -455,8 +455,7 @@ void parse_semicolon(char line[], char *commands[], int *num_commands)
             num_subshell--;
             cmd[count++] = ')';
         }
-        
-        if (line[i] == ';' && num_subshell == 0)
+        else if (line[i] == ';' && num_subshell == 0)
         {
             if (count > 0)
             {
@@ -563,11 +562,9 @@ int command_with_subshell(char line[])
 {
     int i = 0;
 
-    /* skip leading spaces */
     while (line[i] != '\0' && line[i] == ' ')
         i++;
 
-    /* not a subshell */
     if (line[i] != '(')
     {
         if (DEBUG_PRINT)
@@ -580,10 +577,10 @@ int command_with_subshell(char line[])
 
     int open_index = i;
 
-    /* check for a pipe before the subshell (ignoring spaces) -> piped input */
     int j = open_index - 1;
     while (j >= 0 && line[j] == ' ')
         j--;
+
     if (j >= 0 && line[j] == '|')
     {
         if (DEBUG_PRINT)
@@ -591,7 +588,6 @@ int command_with_subshell(char line[])
         return NO_SUBSHELL;
     }
 
-    /* find matching closing parenthesis, supporting nested parentheses */
     int depth = 0;
     int close_index = -1;
     for (int k = open_index; line[k] != '\0'; k++)
@@ -609,7 +605,6 @@ int command_with_subshell(char line[])
         }
     }
 
-    /* no matching closing parenthesis */
     if (close_index == -1)
     {
         if (DEBUG_PRINT)
@@ -617,7 +612,6 @@ int command_with_subshell(char line[])
         return NO_SUBSHELL;
     }
 
-    /* check for a pipe after the subshell (ignoring spaces) -> piped output */
     int p = close_index + 1;
     while (line[p] != '\0' && line[p] == ' ')
         p++;
@@ -628,7 +622,6 @@ int command_with_subshell(char line[])
         return NO_SUBSHELL;
     }
 
-    /* remove the actual parentheses characters (replace with spaces) */
     line[open_index] = ' ';
     line[close_index] = ' ';
 
