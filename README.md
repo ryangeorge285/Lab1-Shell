@@ -69,7 +69,7 @@ As we can see
 
 ![](Images/tr_pipe.png)
 
-There are 11, confirming that the function works as expected.
+- There are 11, confirming that the function works as expected.
 
 → `ps aux | grep python | sort -k 3 -nr | head`
 
@@ -110,8 +110,4 @@ There are 11, confirming that the function works as expected.
 
 ![](Images/nested_2.png)
 
-
-
-
-
-
+- 0 as expected as there are no "burn"s in the file
