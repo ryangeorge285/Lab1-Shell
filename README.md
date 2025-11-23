@@ -11,23 +11,23 @@ Ryan George & Rishabh Rastogi - Sir Tuff and Mr Tuff
 
 Testing  given commands
 
-→ pwd
+→ `pwd`
 
 ![](Images/pwd.png)
 
-→ ls -R
+→ `ls -R`
 
 ![](Images/ls_-R.png)
 
-→ sort txt/phrases.txt
+→ `sort txt/phrases.txt`
 
 ![](Images/sort.png)
 
-→ grep -n burn txt/phrases.txt
+→ `grep -n burn txt/phrases.txt`
 
 ![](Images/grep.png)
 
-→ cp txt/phrases.txt txt/phrases_copy.txt
+→ `cp txt/phrases.txt txt/phrases_copy.txt`
 
 ![](Images/copy.png)
 
@@ -35,15 +35,15 @@ Testing  given commands
 
 Testing given commands
 
-→ cal -y >> txt/calender.txt
+→ `cal -y >> txt/calender.txt`
 
 ![](Images/cal_append.png)
 
-→ wc txt/phrases.txt. > txt/phrases_stats.txt
+→ `wc txt/phrases.txt. > txt/phrases_stats.txt`
 
 ![](Images/wc_write.png)
 
-→ tr a-z A-Z < txt/phrases.txt
+→ `tr a-z A-Z < txt/phrases.txt`
 
 ![](Images/tr_read.png)
 
@@ -53,25 +53,64 @@ Testing given commands
 
 As we can see 
 
-→ cd txt takes it into the txt file
-→ cd .. takes it back to the previous directory
-→ cd . is able to stay in the cwd and refreshes it
-→ cd followed by nothing takes it to the home directory
+→ `cd txt` takes it into the txt file  
+→ `cd ..` takes it back to the previous directory  
+→ `cd .` is able to stay in the cwd and refreshes it  
+→ `cd ` followed by nothing takes it to the home directory  
+
 
 ### Task 4 - Piped commands
 
-→ cat txt/phrases.txt | sort > txt/phrases_sorted.txt
+→ `cat txt/phrases.txt | sort > txt/phrases_sorted.txt`
 
 ![](Images/cat_pipe.png)
 
-→ tr a-z A-Z < txt/phrases.txt | grep BURN | sort | wc -l
+→ `tr a-z A-Z < txt/phrases.txt | grep BURN | sort | wc -l`
 
-![There are 11, confirming that the function works as expected.](Images/tr_pipe.png)
+![](Images/tr_pipe.png)
 
+There are 11, confirming that the function works as expected.
 
-→ ps aux | grep python | sort -k 3 -nr | head
+→ `ps aux | grep python | sort -k 3 -nr | head`
 
 ![](Images/ps_pipe.png)
+
+### Task 5 - Batched commands
+
+→ `mkdir results ; cat txt/phrases.txt | sort | tac > results/rev_sort_phr.txt ; echo "Processing complete."`
+
+![](Images/mkdir_batch.png)
+
+→ `echo "Start processing"; cat txt/phrases.txt | sort > txt/phrases_sorted.txt; head -n 5 txt/phrases.txt; echo "Processing complete"`
+
+![](Images/echo_batch.png)
+
+→ `sort txt/phrases.txt | uniq > txt/phrases_unique.txt; wc -l txt/phrases_unique.txt`
+
+![](Images/sort_batch.png)
+
+### Task 6 - Proposed Extension 1: Subshells
+
+→ `echo "Batch start"; (grep -i burn txt/phrases.txt | sort > txt/phrases_burn_sorted.txt); wc -l txt/phrases_burn_sorted.txt; echo "Batch complete"`
+
+![](Images/sub_1.png)
+
+→ `echo "Starting"; (head -n 5 txt/phrases.txt | sort > txt/phrases_top5_sorted.txt); cat txt/phrases_top5_sorted.txt; echo "Finished"`
+
+![](Images/sub_2.png)
+
+### Task 7 - Proposed Extension 2: Nested Subshells
+
+
+→ `echo "Start"; (echo "Outer subshell"; (head -n 3 txt/phrases.txt | sort > txt/top3_sorted.txt); cat txt/top3_sorted.txt); echo "Done"`
+
+![](Images/nested_1.png)
+
+→ `echo "Start"; (cat txt/phrases.txt | head -n 5 > txt/outer_top5.txt; echo "Outer layer"; (sort txt/outer_top5.txt | uniq > txt/middle_unique.txt; echo "Middle layer"; (grep -i burn txt/middle_unique.txt | wc -l > txt/inner_burn_count.txt; echo "Inner layer"))); echo "Done"`
+
+![](Images/nested_2.png)
+
+
 
 
 
