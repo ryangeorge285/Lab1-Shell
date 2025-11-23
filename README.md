@@ -33,6 +33,8 @@ Testing  given commands
 
 ### Task 2 - Commands with redirection
 
+![](Images/TASK2.png)
+
 Testing given commands
 
 → `cal -y >> txt/calender.txt`
