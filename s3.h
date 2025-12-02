@@ -46,7 +46,7 @@ enum CDIndex
 enum PipeIndex
 {
     NO_PIPE,
-    PIPE_YES_PLEASE_OUTLOOK
+    PIPE_PRESENT
 };
 
 enum SubshellIndex

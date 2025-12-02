@@ -31,7 +31,6 @@ void read_command_line(char line[])
     to split it into logical cstrings.
     There is no dynamic allocation.
 */
-
 void parse_command(char line[], char *args[], int *argsc)
 {
     char *line_copy = strdup(line);
@@ -65,10 +64,10 @@ Creates a child process and calls child() from it to execute the command
 */
 void launch_program(char *args[], int argsc)
 {
-    if (strcmp(args[0], "exit") == 0)
+    if (strcmp(args[0], "exit") == 0) // If exit got entered kill the process
         exit(0);
 
-    int rc = fork();
+    int rc = fork(); // fork
 
     if (rc < 0)
     {
@@ -81,12 +80,12 @@ void launch_program(char *args[], int argsc)
     }
     else
     {
-        reap();
+        reap(); // Wait for child to finish executing
     }
 }
 
 /*
-Determines which redirection a command has
+Determines which redirection a command has and returns the type
 */
 int command_with_redirection(char *args[], int argsc)
 {
@@ -109,7 +108,7 @@ int command_with_redirection(char *args[], int argsc)
 }
 
 /*
-Returns which type of CD process it is - Rishabh
+Returns which type of CD process it is
 */
 int command_with_cd(char *args[], int argsc)
 {
@@ -164,7 +163,7 @@ int command_with_pipes(char *args[], int argsc)
         {
             if (DEBUG_PRINT)
                 printf("Pipe operator found\n");
-            return PIPE_YES_PLEASE_OUTLOOK;
+            return PIPE_PRESENT;
         }
     }
     return NO_PIPE;
