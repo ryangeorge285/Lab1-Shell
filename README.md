@@ -1,15 +1,24 @@
 # Lab1 - Shell
 
-Ryan George & Rishabh Rastogi - Sir Tuff and Mr Tuff
+_Ryan George & Rishabh Rastogi - Sir Tuff and Mr Tuff_  
+Our implementation of a simple shell parser, implementing and all the proposed extensions and tested.
 
+## Development
 
-## Testing
+Discussing together our methodology for this project, we decided that writing skeleton code together for each function then splitting off and implementing them independently was the best way for us. This meant we both worked on atleast half of each functionailty of the shell. In the skeleton code, we would define a simple function prototype and note what the function would take in and what it would return. Examples of this can be seen in our git commits:
+
+![](Images/skeleton_code.png)
+In the picture above you can see the completion of section 3. The skeleton code for child with output redirected to append was completed and then for the next section empty functions were added ready to be implemented.
+
+This methodology allowed us to work in parralel with great efficiency. This is like an incremental methodology as we tested every section as a new prototype every time.
+
+## Features
 
 ### Task 1 - Basic commands
 
 ![](Images/TASK1.png)
 
-Testing  given commands
+Testing given commands
 
 → `pwd`
 
@@ -53,13 +62,12 @@ Testing given commands
 
 ![](Images/cd.png)
 
-As we can see 
+As we can see
 
 → `cd txt` takes it into the txt file  
 → `cd ..` takes it back to the previous directory  
 → `cd .` is able to stay in the cwd and refreshes it  
-→ `cd ` followed by nothing takes it to the home directory  
-
+→ `cd ` followed by nothing takes it to the home directory
 
 ### Task 4 - Piped commands
 
@@ -102,7 +110,6 @@ As we can see
 ![](Images/sub_2.png)
 
 ### Task 7 - Proposed Extension 2: Nested Subshells
-
 
 → `echo "Start"; (echo "Outer subshell"; (head -n 3 txt/phrases.txt | sort > txt/top3_sorted.txt); cat txt/top3_sorted.txt); echo "Done"`
 
