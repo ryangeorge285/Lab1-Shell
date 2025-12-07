@@ -4,6 +4,7 @@
 void construct_shell_prompt(char shell_prompt[])
 {
     char cwd[MAX_PROMPT_LEN - 6];
+    // Capture current working directory for the prompt
     getcwd(cwd, 100);
     sprintf(shell_prompt, "\n[%s s3]$", cwd);
 }
@@ -33,6 +34,7 @@ void read_command_line(char line[])
 */
 void parse_command(char line[], char *args[], int *argsc)
 {
+    // Work on a copy so the original line remains untouched
     char *line_copy = strdup(line);
 
     /// See the man page of strtok(...)
@@ -89,6 +91,7 @@ Determines which redirection a command has and returns the type
 */
 int command_with_redirection(char *args[], int argsc)
 {
+    // Scan arguments for the first redirection operator
     for (int i = 0; i < argsc; i++)
     {
         if (strcmp(args[i], "<") == 0)
@@ -112,6 +115,7 @@ Returns which type of CD process it is
 */
 int command_with_cd(char *args[], int argsc)
 {
+    // Only handle cd variants here
     if (strcmp(args[ARG_PROGNAME], "cd") == 0)
     {
         if (args[ARG_1] == NULL)
@@ -135,6 +139,7 @@ Tokenise the commands by '|'
 */
 void parse_pipes(char line[], char *commands[], int *num_commands)
 {
+    // Split the incoming line into pipe-separated commands
     char *token = strtok(line, "|");
     *num_commands = 0;
 
@@ -157,6 +162,7 @@ Check whether the command has pipes
 */
 int command_with_pipes(char *args[], int argsc)
 {
+    // Look for any pipe operator in the tokens
     for (int index = 0; index < argsc; index++)
     {
         if (strcmp(args[index], "|") == 0)
@@ -209,6 +215,7 @@ void extract_redirection_file(char *args[], int *argsc, int redirection, char *f
 {
     int redirection_index = 0;
 
+    // Locate the operator and grab the next argument as the path
     for (int index = 0; index < *argsc; index++)
     {
         if (strcmp(args[index], ">") == 0 && redirection == OUTPUT_REDIRECTION_WRITE || strcmp(args[index], ">>") == 0 && redirection == OUTPUT_REDIRECTION_APPEND || strcmp(args[index], "<") == 0 && redirection == INPUT_REDIRECTION)
@@ -241,6 +248,7 @@ void child_with_input_redirected(char *args[], int argsc)
     char filepath[MAX_LINE];
     extract_redirection_file(args, &argsc, INPUT_REDIRECTION, filepath);
 
+    // Open the file and replace stdin with it
     int fd = open(filepath, O_RDONLY);
     if (fd >= 0)
     {
@@ -259,6 +267,7 @@ void child_with_output_redirected_write(char *args[], int argsc)
 {
     char filepath[MAX_LINE];
     extract_redirection_file(args, &argsc, OUTPUT_REDIRECTION_WRITE, filepath);
+    // Create or truncate the file for stdout redirection
     int fd = open(filepath, O_WRONLY | O_CREAT, 0644);
     if (fd >= 0)
     {
@@ -278,6 +287,7 @@ void child_with_output_redirected_append(char *args[], int argsc)
     char filepath[MAX_LINE];
     extract_redirection_file(args, &argsc, OUTPUT_REDIRECTION_APPEND, filepath);
 
+    // Append stdout to the target file
     int fd = open(filepath, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd >= 0)
     {
@@ -335,6 +345,7 @@ void launch_program_with_piping(char *commands[], int num_commands)
     int fd[num_commands - 1][2];
     int rc;
 
+    // Build the pipes before forking children
     for (int pipe_index = 0; pipe_index < num_commands - 1; pipe_index++)
     {
         if (pipe(fd[pipe_index]))
@@ -439,6 +450,7 @@ void parse_semicolon(char line[], char *commands[], int *num_commands)
     int count = 0;
     char cmd[MAX_PROMPT_LEN];
 
+    // Track depth so inner semicolons are ignored
     if (DEBUG_PRINT)
         printf("Parsed batched input: \n");
 
@@ -500,6 +512,7 @@ void execute_subshell(char line[])
     char *command_array[MAX_LINE];
     int num_commands;
 
+    // Break the subshell line into individual commands
     parse_semicolon(line, command_array, &num_commands);
 
     for (int command_index = 0; command_index < num_commands; command_index++)
@@ -561,6 +574,7 @@ int command_with_subshell(char line[])
 {
     int i = 0;
 
+    // Skip any leading whitespace
     while (line[i] != '\0' && line[i] == ' ')
         i++;
 
