@@ -14,6 +14,24 @@ This methodology allowed us to work in parralel with great efficiency. This is l
 
 ## Features
 
+
+We implemented all the entire requirements and extensions of the assignment. We added several quality of life features to improve usability and debugging. This includes a debug mode that allows users to view detailed error messages, along with additional enhancements to make the shell easier to use and troubleshoot.
+
+- Basic commands: Fully implemented, including prompt display, command parsing, and execution using `fork()` and `execvp()`. The shell correctly handles the `exit` command.
+
+- Redirection: Fully implemented for input `<` and output `>/>>`, with correct extraction of file paths and use of `dup2()`. Single redirection per command is supported.
+
+- `cd`: supports `cd <dir>`, `cd (home)`, and `cd `- (previous directory). The shell prompt updates dynamically to show the current working directory.
+
+- Pipes: Fully implemented for pipelines of any length. Each stage correctly redirects stdin and stdout using `dup2()` and closes unused file descriptors.
+
+- Batched: Fully implemented; multiple commands execute independently.
+
+- Proposed Extensions (PE1 & PE2): Subshells and nested subshells are fully supported. Subshells run commands in a child process without affecting the main shell. Nested subshells are handled recursively.
+
+- Extras: Debug print hooks for tracing, robust parentheses-aware semicolon parsing, and safeguards for subshells adjacent to pipes. The shell also tracks nested subshell depth, making it aware of how deeply commands are nested.
+
+
 ### Task 1 - Basic commands
 
 ![](Images/TASK1.png)
