@@ -3,6 +3,26 @@
 _Ryan George & Rishabh Rastogi - Sir Tuff and Mr Tuff_  
 Our implementation of a simple shell parser, implementing and all the proposed extensions and tested.
 
+## Features
+
+We were able to complete all the tasks while also adding a debug function to make it easier to fix and test our code in more detail. We were also able to do both the proposed extensions tasks which were functioning correctly with the rest of the functions implemented.
+
+
+- Basic commands: Fully implemented using `fork()` and `execvp()`. The shell also correctly handles the `exit` command.
+
+- Redirection: Fully implemented for input `<` and output `>/>>`, with modes for each file and use of `dup2()`. Also creates the file if necessary.
+
+- `cd`: Supports `cd <dir>`, `cd (home)`, and `cd `- (previous directory). The shell prompt updates dynamically to show the current working directory.
+
+- Pipes: Fully implemented for pipelines of any length. Also is able to redirect while using pipes.
+
+- Batched: Fully implemented; multiple commands execute independently. Additonally works perfectly fine with pipes.
+
+- Proposed Extensions (PE1 & PE2): Subshells and nested subshells are fully supported. The shell also tracks nested subshell depth as to not get confused with batched commands which may interfere. Nested subshells are handled recursively.
+
+- Extras: We have a debug function which shows us the parsed inputs and also was used for the different detections of commands such as semicolon detection or even the depth of the nested subshell.
+
+
 ## Development
 
 Discussing together our methodology for this project, we decided that writing skeleton code together for each function then splitting off and implementing them independently was the best way for us. This meant we both worked on atleast half of each functionailty of the shell. In the skeleton code, we would define a simple function prototype and note what the function would take in and what it would return. Examples of this can be seen in our git commits:
@@ -12,25 +32,8 @@ In the picture above you can see the completion of section 3. The skeleton code 
 
 This methodology allowed us to work in parralel with great efficiency. This is like an incremental methodology as we tested every section as a new prototype every time.
 
-## Features
 
-
-We implemented all the entire requirements and extensions of the assignment. We added several quality of life features to improve usability and debugging. This includes a debug mode that allows users to view detailed error messages, along with additional enhancements to make the shell easier to use and troubleshoot.
-
-- Basic commands: Fully implemented, including prompt display, command parsing, and execution using `fork()` and `execvp()`. The shell correctly handles the `exit` command.
-
-- Redirection: Fully implemented for input `<` and output `>/>>`, with correct extraction of file paths and use of `dup2()`. Single redirection per command is supported.
-
-- `cd`: supports `cd <dir>`, `cd (home)`, and `cd `- (previous directory). The shell prompt updates dynamically to show the current working directory.
-
-- Pipes: Fully implemented for pipelines of any length. Each stage correctly redirects stdin and stdout using `dup2()` and closes unused file descriptors.
-
-- Batched: Fully implemented; multiple commands execute independently.
-
-- Proposed Extensions (PE1 & PE2): Subshells and nested subshells are fully supported. Subshells run commands in a child process without affecting the main shell. Nested subshells are handled recursively.
-
-- Extras: Debug print hooks for tracing, robust parentheses-aware semicolon parsing, and safeguards for subshells adjacent to pipes. The shell also tracks nested subshell depth, making it aware of how deeply commands are nested.
-
+## Testing
 
 ### Task 1 - Basic commands
 
