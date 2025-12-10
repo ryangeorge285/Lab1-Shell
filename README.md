@@ -1,6 +1,6 @@
 # Lab1 - Shell
 
-_Ryan George & Rishabh Rastogi - Sir Tuff and Mr Tuff_  
+_Ryan George(02581757) & Rishabh Rastogi(02555762) - Sir Tuff and Mr Tuff_  
 Our implementation of a simple shell parser, implementing and all the proposed extensions and tested.
 
 ## Features
